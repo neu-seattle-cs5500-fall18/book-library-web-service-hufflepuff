@@ -23,15 +23,16 @@ Your team needs to build a web-service that presents an API exposing these featu
 
 ## Tools and technologies
 We will be using the following tools this semester:
-Python
-Flask (simple web framework)
-Sphinx (for overall documentation)
-PostgreSQL (for data storage)
-Heroku (for deployments)
-Bitbucket (for source control)
-Swagger (for API documentation)
-JSON (for API interoperability)
-Heroku
+1. Python
+2. Flask (simple web framework)
+3. Sphinx (for overall documentation)
+4. PostgreSQL (for data storage)
+5. Heroku (for deployments)
+6. Bitbucket (for source control)
+7. Swagger (for API documentation)
+8. JSON (for API interoperability)
+9. Heroku
 
 ## Deliverables
-A functional and deployed API that manages to enable the user stories listed above. In addition to the functional service you need to provide documentation (the details of which we will cover later) both for your service at a high level as well as for your API (expectations, behavior, responses).
+ A functional and deployed API that manages to enable the user stories listed above. 
+ In addition to the functional service you need to provide documentation (the details of which we will cover later) both for your service at a high level as well as for your API (expectations, behavior, responses).
