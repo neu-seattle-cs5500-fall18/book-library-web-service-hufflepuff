@@ -36,3 +36,13 @@ We will be using the following tools this semester:
 ## Deliverables
  A functional and deployed API that manages to enable the user stories listed above. 
  In addition to the functional service you need to provide documentation (the details of which we will cover later) both for your service at a high level as well as for your API (expectations, behavior, responses).
+ 
+ ## Wiki Page Links & More!!
+ Welcome to the **book-library-web-service-hufflepuff** wiki!
+
+* [Technical Design Document](https://github.com/neu-seattle-cs5500-fall18/book-library-web-service-hufflepuff/wiki/Technical-Design-Document "Title")
+
+* [Press Release / FAQ](https://github.com/neu-seattle-cs5500-fall18/book-library-web-service-hufflepuff/wiki/Press-Release---FAQ "Title2")
+
+* [Heroku Application Link](https://hufflepuffbookstore.herokuapp.com/ "Title3")
+
