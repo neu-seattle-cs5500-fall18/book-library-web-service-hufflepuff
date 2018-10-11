@@ -1,0 +1,21 @@
+{
+  "name": "book-library-hufflepuff",
+  "description": "The book catalog of the team \"hufflepuff\". This application provides all the RESTful web services required by the book catalog system.",
+  "scripts": {
+  },
+  "env": {
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "addons": [
+    "heroku-postgresql"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
+}
