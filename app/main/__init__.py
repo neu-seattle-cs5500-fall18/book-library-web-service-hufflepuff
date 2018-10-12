@@ -1,12 +1,15 @@
 from flask import Flask, json, Response
 from sqlalchemy import create_engine
+from routes import init_api_routes
 import os
 
 
 app = Flask(__name__)
 
-db_string = os.environ.get('DATABASE_URL', None)
+app.config['SECRET_KEY'] = 'Hello from team Hufflepuff :D'
+init_api_routes(app)
 
+db_string = os.environ.get('DATABASE_URL', None)
 db = create_engine(db_string)
 
 

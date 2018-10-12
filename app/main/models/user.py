@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer, Date, ForeignKey
 
 
-class user(Model):
+class User(Model):
     """
         The user model for storing user details
     """

@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer, Date, ForeignKey
 
 
-class loan(Model):
+class Loan(Model):
     """
         The loan model for storing loan details
     """

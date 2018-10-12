@@ -1,9 +1,9 @@
 from sqlalchemy import Column, String, Integer, Date, ForeignKey
 
 
-class note(Model):
+class Notes(Model):
     """
-        The library model for storing books details
+        The library model for storing notes for a book
     """
     __tablename__ = 'note'
 

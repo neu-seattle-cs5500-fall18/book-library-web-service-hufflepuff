@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer, Date, ForeignKey
 
 
-class library(Model):
+class Library(Model):
     """
         The library model for storing books details
     """
