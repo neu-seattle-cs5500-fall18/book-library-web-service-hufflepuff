@@ -38,7 +38,6 @@ six==1.10.0
 sklearn==0.0
 SQLAlchemy==1.2.12
 tweepy==3.5.0
-unsplash-python==1.0.0a9
 urllib3==1.22
 Werkzeug==0.14.1
 wrapt==1.10.11
