@@ -1,10 +1,11 @@
 from flask import Flask, json, Response
 from sqlalchemy import create_engine
+import os
 
 
 app = Flask(__name__)
 
-db_string = "postgres://vywhwbzvzxprkq:2f7083fed0106103e25ce5300750f5a8af50678ae11710731e61692e7deab729@ec2-54-225-76-201.compute-1.amazonaws.com:5432/d58h3832oj43d6"
+db_string = os.environ.get('DATABASE_URL', None)
 
 db = create_engine(db_string)
 
