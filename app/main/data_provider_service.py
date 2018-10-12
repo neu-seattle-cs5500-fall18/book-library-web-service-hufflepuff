@@ -1,11 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from Models import User
-from Models import Library
-from Models import Notes
-from Models import Loan
-from Models import init_database
+from .models import User
+from .models import Library
+from .models import Notes
+from .models import Loan
+from .models import init_database
 
 
 class DataProviderService:

@@ -1,4 +1,4 @@
-from data_provider_service import DataProviderService
+from .data_provider_service import DataProviderService
 from flask import abort
 import os
 

@@ -1,4 +1,5 @@
 from sqlalchemy import Column, String, Integer, Date, ForeignKey
+from .Model import Model
 
 
 class Library(Model):
