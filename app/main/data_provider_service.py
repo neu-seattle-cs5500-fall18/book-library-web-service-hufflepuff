@@ -3,9 +3,9 @@ from sqlalchemy.orm import sessionmaker
 from flask import json
 
 from .models.user import User
-from .models import Library
-from .models import Notes
-from .models import Loan
+from .models.library import Library
+from .models.notes import Notes
+from .models.loan import Loan
 from .models import init_database
 
 
@@ -35,11 +35,5 @@ class DataProviderService:
         :return: The users.
         """
         all_users = []
-        print(self.session.query(User).all())
-
-        for each in self.session.query(User).all():
-            print(json.dumps(each))
-
-        print(all_users)
-        # all_users = self.session.query(User).all()
-        return all_users
+        all_users = self.session.query(User).all()
+        return [user.serialize() for user in all_users]

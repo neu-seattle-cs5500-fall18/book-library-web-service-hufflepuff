@@ -1,11 +1,6 @@
 from sqlalchemy import Column, String, Integer, Date, ForeignKey
 from .Model import Model
-import json
 
-#
-# to use jsonld, we should install pyLD using:
-#        pip install PyLD
-#
 from pyld import jsonld
 
 
@@ -31,27 +26,28 @@ class User(Model):
     def __repr__(self):
         return '<userid {}>'.format(self.user_id)
 
-        #
+    #
     # METHODS
     #
 
     def serialize(self):
         compacted_json = jsonld.compact({
-            "user_id": self.user_id,
-            "name": self.name,
-            "email": self.email,
-            "phone": self.phone,
-            "birth_year": self.birth_year
+            "http://schema.org/user_id": self.user_id,
+            "http://schema.org/name": self.name,
+            "http://schema.org/email": self.email,
+            "http://schema.org/phone": self.phone,
+            "http://schema.org/birth_year": self.birth_year
         }, self.get_context())
+        del compacted_json['@context']
         return compacted_json
 
     def get_context(self):
         return {
             "@context": {
-                "user_id": "user_id",
-                "name": "name",
-                "email": "email",
-                "phone": "phone",
-                "birth_year": "birth_year"
+                "user_id": "http://schema.org/user_id",
+                "name": "http://schema.org/name",
+                "email": "http://schema.org/email",
+                "phone": "http://schema.org/phone",
+                "birth_year": "http://schema.org/birth_year"
             }
         }

@@ -6,7 +6,7 @@ class Notes(Model):
     """
         The library model for storing notes for a book
     """
-    __tablename__ = 'note'
+    __tablename__ = 'notes'
 
     note_id = Column(Integer, primary_key=True)
     book_id = Column(Integer, ForeignKey('library.book_id'))
