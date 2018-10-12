@@ -6,3 +6,4 @@ PyLD==1.0.3
 pylint==1.7.2
 requests==2.18.4
 SQLAlchemy==1.2.12
+gunicorn==19.5.0
