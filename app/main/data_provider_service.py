@@ -1,11 +1,12 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from flask import json
 
-from models import User
-from models import Library
-from models import Notes
-from models import Loan
-from models import init_database
+from .models.user import User
+from .models import Library
+from .models import Notes
+from .models import Loan
+from .models import init_database
 
 
 class DataProviderService:
@@ -34,5 +35,11 @@ class DataProviderService:
         :return: The users.
         """
         all_users = []
-        all_users = self.session.query(User).order_by(User.name).all()
+        print(self.session.query(User).all())
+
+        for each in self.session.query(User).all():
+            print(json.dumps(each))
+
+        print(all_users)
+        # all_users = self.session.query(User).all()
         return all_users
