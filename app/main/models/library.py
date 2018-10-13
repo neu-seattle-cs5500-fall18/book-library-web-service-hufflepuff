@@ -39,7 +39,7 @@ class Library(Model):
             "http://schema.org/author": self.author,
             "http://schema.org/subject": self.subject,
             "http://schema.org/status": self.status
-            "http://schema.org/published_date":published_date
+            "http://schema.org/published_date": self.published_date
         }, self.get_context())
         del compacted_json['@context']
         return compacted_json
@@ -52,6 +52,6 @@ class Library(Model):
                 "author": "http://schema.org/author",
                 "subject": "http://schema.org/subject",
                 "status": "http://schema.org/status",
-                "published_date":"http://schema.org/published_date"
+                "published_date": "http://schema.org/published_date"
             }
         }
