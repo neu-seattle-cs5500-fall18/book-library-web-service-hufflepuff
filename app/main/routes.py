@@ -1,5 +1,6 @@
 from .middleware import initialize_database as init_db
 from .middleware import get_users
+from .middleware import add_books
 
 
 def init_api_routes(app):
