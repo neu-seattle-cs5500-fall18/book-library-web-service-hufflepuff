@@ -29,10 +29,13 @@ class Loan(Model):
 
     def serialize(self):
         compacted_json = jsonld.compact({
-            "http://schema.org/note_id": self.note_id,
-            "http://schema.org/name": self.book_id,
+            "http://schema.org/loan_id": self.loan_id,
+            "http://schema.org/book_id": self.book_id,
             "http://schema.org/user_id": self.user_id,
-            "http://schema.org/notes": self.notes
+            "http://schema.org/list_name": self.list_name,
+            "http://schema.org/status": self.status,
+            "http://schema.org/borrowed_date": self.borrowed_date,
+            "http://schema.org/return_date": self.return_date
         }, self.get_context())
         del compacted_json['@context']
         return compacted_json
@@ -40,9 +43,12 @@ class Loan(Model):
     def get_context(self):
         return {
             "@context": {
-                "note_id": "http://schema.org/note_id",
+                "loan_id": "http://schema.org/loan_id",
                 "book_id": "http://schema.org/book_id",
                 "user_id": "http://schema.org/user_id",
-                "notes": "http://schema.org/notes"
+                "list_name": "http://schema.org/list_name",
+                "status": "http://schema.org/status",
+                "borrowed_date": "http://schema.org/borrowed_date",
+                "return_date": "http://schema.org/return_date"
             }
         }
