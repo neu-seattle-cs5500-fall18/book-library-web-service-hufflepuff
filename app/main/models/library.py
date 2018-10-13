@@ -17,13 +17,13 @@ class Library(Model):
     status = Column(String(20))
     published_date = Column(Date)
 
-    def __init__(self, book_id, name, author, subject, published_date, status):
+    def __init__(self, book_id, name, author, subject, status, published_date):
         self.book_id = book_id
         self.name = name
         self.author = author
         self.subject = subject
-        self.published_date = published_date
         self.status = status
+        self.published_date = published_date
 
     def __repr__(self):
         return '<bookid {}>'.format(self.book_id)

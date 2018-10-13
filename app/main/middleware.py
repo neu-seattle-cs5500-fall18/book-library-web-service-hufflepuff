@@ -20,3 +20,26 @@ def get_users():
         # we send HTTP 404 - Not Found error to the client
         #
         abort(404)
+
+
+def add_books():
+    name = request.form["name"]
+    author = request.form["author"]
+    subject = request.form["subject"]
+    status = request.form["status"]
+    published_date = request.form["published_date"]
+
+    new_book_id = DATA_PROVIDER.add_books(name=name,
+                                          author=author,
+                                          subject=subject,
+                                          status=status,
+                                          published_date=published_date)
+
+    return jsonify({
+        "id": new_book_id,
+        "name": name,
+        "author": author,
+        "subject": subject,
+        "status": status,
+        "published_date": published_date
+    })

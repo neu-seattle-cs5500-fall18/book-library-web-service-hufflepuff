@@ -37,3 +37,19 @@ class DataProviderService:
         all_users = []
         all_users = self.session.query(User).all()
         return [user.serialize() for user in all_users]
+
+    def add_books(self, name, author, subject,
+                  status, published_date):
+        """
+        :return: The book added with book_id.
+        """
+        new_book = Library(name=name,
+                           author=author,
+                           subject=subject,
+                           status=status,
+                           published_date=published_date)
+
+        self.session.add(new_book)
+        self.session.commit()
+
+        return new_book.book_id
