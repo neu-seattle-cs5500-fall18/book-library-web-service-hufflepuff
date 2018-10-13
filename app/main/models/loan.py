@@ -1,6 +1,7 @@
 from sqlalchemy import Column, String, Integer, Date, ForeignKey
 from .Model import Model
 
+from pyld import jsonld
 
 class Loan(Model):
     """
@@ -25,3 +26,29 @@ class Loan(Model):
         self.status = status
         self.borrowed_date = borrowed_date
         self.return_date = return_date
+
+    def serialize(self):
+        compacted_json = jsonld.compact({
+            "http://schema.org/loan_id": self.loan_id,
+            "http://schema.org/book_id": self.book_id,
+            "http://schema.org/user_id": self.user_id,
+            "http://schema.org/list_name": self.list_name,
+            "http://schema.org/status": self.status,
+            "http://schema.org/borrowed_date": self.borrowed_date,
+            "http://schema.org/return_date": self.return_date
+        }, self.get_context())
+        del compacted_json['@context']
+        return compacted_json
+
+    def get_context(self):
+        return {
+            "@context": {
+                "loan_id": "http://schema.org/loan_id",
+                "book_id": "http://schema.org/book_id",
+                "user_id": "http://schema.org/user_id",
+                "list_name": "http://schema.org/list_name",
+                "status": "http://schema.org/status",
+                "borrowed_date": "http://schema.org/borrowed_date",
+                "return_date": "http://schema.org/return_date"
+            }
+        }
