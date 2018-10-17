@@ -58,8 +58,7 @@ def init_api_routes(app):
         class GetBooks(Resource):
                 @book_api.response(200, 'Success')
                 @book_api.response(404, 'Not Found')
-                @book_api.doc('list_books',
-                              params={'book_id': 'The book_id of the ' +
+                @book_api.doc(params={'book_id': 'The book_id of the ' +
                                       'book to be retrieved'})
                 def get(self, book_id):
                         return [book_id], 200
@@ -70,6 +69,7 @@ def init_api_routes(app):
                                       'book to be updated'})
                 @book_api.expect(add_book)
                 def put(self, book_id):
+                        '''Shows a list of all todos'''
                         return {"message": "Book Updated Successfully"}, 200
 
                 @book_api.response(204, 'No Content')
@@ -81,6 +81,7 @@ def init_api_routes(app):
 
         @book_api.route('/api/books')
         class AddBooks(Resource):
+                '''Shows a list of all todos'''
                 @book_api.response(201, 'Created')
                 @book_api.response(400, 'Validation Error')
                 @book_api.expect(add_book)
