@@ -3,11 +3,13 @@ from sqlalchemy import create_engine
 # import routes
 from .routes import init_api_routes
 import os
+from flask_cors import CORS
 
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'Hello from team Hufflepuff :D'
+CORS(app)
 init_api_routes(app)
 
 

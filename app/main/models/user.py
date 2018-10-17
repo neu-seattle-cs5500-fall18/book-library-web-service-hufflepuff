@@ -16,8 +16,7 @@ class User(Model):
     phone = Column(String(20), unique=True)
     birth_year = Column(Integer)
 
-    def __init__(self, user_id, name, email, phone, birth_year):
-        self.user_id = user_id
+    def __init__(self, name, email, phone, birth_year):
         self.name = name
         self.email = email
         self.phone = phone

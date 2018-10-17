@@ -17,8 +17,7 @@ class Library(Model):
     status = Column(String(20))
     published_date = Column(Date)
 
-    def __init__(self, book_id, name, author, subject, status, published_date):
-        self.book_id = book_id
+    def __init__(self, name, author, subject, status, published_date):
         self.name = name
         self.author = author
         self.subject = subject

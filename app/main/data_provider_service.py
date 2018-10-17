@@ -6,7 +6,9 @@ from .models.user import User
 from .models.library import Library
 from .models.notes import Notes
 from .models.loan import Loan
-from .models import init_database
+from .models.list import List
+from .models.listitem import Listitem
+from .models.init_database import init_database
 
 
 class DataProviderService:
@@ -29,6 +31,14 @@ class DataProviderService:
         :return: None
         """
         init_database(self.engine)
+
+    def get_books(self):
+        """
+        :return: The users.
+        """
+        all_books = []
+        all_books = self.session.query(Library).all()
+        return [book.serialize() for book in all_books]
 
     def get_users(self):
         """
@@ -53,3 +63,18 @@ class DataProviderService:
         self.session.commit()
 
         return new_book.book_id
+
+    def add_users(self, name, email, phone,
+                  birth_year):
+        """
+        :return: The user added with user_id.
+        """
+        new_user = User(name=name,
+                        email=email,
+                        phone=phone,
+                        birth_year=birth_year)
+
+        self.session.add(new_user)
+        self.session.commit()
+
+        return new_user.user_id

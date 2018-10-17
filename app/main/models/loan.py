@@ -3,6 +3,7 @@ from .Model import Model
 
 from pyld import jsonld
 
+
 class Loan(Model):
     """
         The loan model for storing loan details
@@ -11,18 +12,16 @@ class Loan(Model):
 
     loan_id = Column(Integer, primary_key=True, autoincrement=True)
     book_id = Column(Integer, ForeignKey('library.book_id'))
-    user_id = Column(Integer, ForeignKey('user.user_id'))
-    list_name = Column(String(100), nullable=False, unique=True)
+    user_id = Column(Integer, ForeignKey('users.user_id'))
     status = Column(String(20))
     borrowed_date = Column(Date, nullable=False)
     return_date = Column(Date)
 
-    def __init__(self, loan_id, book_id, user_id, list_name, status,
+    def __init__(self, loan_id, book_id, user_id, status,
                  borrowed_date, return_date):
         self.loan_id = loan_id
         self.book_id = book_id
         self.user_id = user_id
-        self.list_name = list_name
         self.status = status
         self.borrowed_date = borrowed_date
         self.return_date = return_date
@@ -32,7 +31,6 @@ class Loan(Model):
             "http://schema.org/loan_id": self.loan_id,
             "http://schema.org/book_id": self.book_id,
             "http://schema.org/user_id": self.user_id,
-            "http://schema.org/list_name": self.list_name,
             "http://schema.org/status": self.status,
             "http://schema.org/borrowed_date": self.borrowed_date,
             "http://schema.org/return_date": self.return_date
@@ -46,7 +44,6 @@ class Loan(Model):
                 "loan_id": "http://schema.org/loan_id",
                 "book_id": "http://schema.org/book_id",
                 "user_id": "http://schema.org/user_id",
-                "list_name": "http://schema.org/list_name",
                 "status": "http://schema.org/status",
                 "borrowed_date": "http://schema.org/borrowed_date",
                 "return_date": "http://schema.org/return_date"
