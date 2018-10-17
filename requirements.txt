@@ -44,3 +44,4 @@ urllib3==1.22
 Werkzeug==0.14.1
 wrapt==1.10.11
 flask_restplus==0.12.01
+gunicorn==19.9.0
