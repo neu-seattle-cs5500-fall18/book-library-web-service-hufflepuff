@@ -236,7 +236,7 @@ def init_api_routes(app):
                 @user_api.doc(params={'user_id': 'The user_id of the ' +
                                       'lists to be retrieved for'})
                 def get(self, user_id):
-                        '''Shows a list'''
+                        '''Shows all lists of a user'''
                         return [user_id], 200
 
                 @user_api.response(201, 'Created')
@@ -248,6 +248,14 @@ def init_api_routes(app):
 
         @list_api.route('/<int:list_id>')
         class GetLists(Resource):
+                @list_api.response(200, 'Success')
+                @list_api.response(404, 'Not Found')
+                @list_api.doc(params={'list_id': 'The list_id of the ' +
+                                      'list to be retrieved for'})
+                def get(self, list_id):
+                        '''Shows details of a list'''
+                        return [list_id], 200
+
                 @list_api.response(200, 'Success')
                 @list_api.response(400, 'Validation Error')
                 @list_api.doc(params={'list_id': 'The list_id of the ' +
