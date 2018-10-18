@@ -27,6 +27,12 @@ def init_api_routes(app):
                 'published_date': fields.DateTime
                 })
 
+        search_book = api.model('Book', {
+                'author': fields.String,
+                'subject': fields.String
+                'published_date': fields.DateTime
+                })
+
         add_user = api.model('User', {
                 'name': fields.String,
                 'email': fields.String,
@@ -61,6 +67,7 @@ def init_api_routes(app):
                 @book_api.doc(params={'book_id': 'The book_id of the ' +
                                       'book to be retrieved'})
                 def get(self, book_id):
+                        '''Shows a list of all books'''
                         return [book_id], 200
 
                 @book_api.response(200, 'Success')
@@ -69,7 +76,7 @@ def init_api_routes(app):
                                       'book to be updated'})
                 @book_api.expect(add_book)
                 def put(self, book_id):
-                        '''Shows a list of all todos'''
+                        '''Updates a book'''
                         return {"message": "Book Updated Successfully"}, 200
 
                 @book_api.response(204, 'No Content')
@@ -77,16 +84,27 @@ def init_api_routes(app):
                 @book_api.doc(params={'book_id': 'The book_id of the ' +
                                       'book to be deleted'})
                 def delete(self, book_id):
+                        '''Deletes the book'''
                         return {"message": "Book Deleted Successfully"}, 204
 
         @book_api.route('/api/books')
         class AddBooks(Resource):
-                '''Shows a list of all todos'''
                 @book_api.response(201, 'Created')
                 @book_api.response(400, 'Validation Error')
                 @book_api.expect(add_book)
                 def post(self):
+                        '''Creates a book'''
                         return {"message": "Book Added Successfully"}, 201
+
+        @book_api.route('/api/books/search')
+        class SearchBooks(Resource):
+                @book_api.response(200, 'Success')
+                @book_api.response(201, 'No Content')
+                @book_api.response(400, 'Validation Error')
+                @book_api.expect(search_book)
+                def post(self):
+                        '''Searches for a book'''
+                        return {"message": "Matching books"}, 200
 
         @user_api.route('/api/users/<int:user_id>')
         class GetUsers(Resource):
@@ -95,6 +113,7 @@ def init_api_routes(app):
                 @user_api.doc(params={'user_id': 'The user_id of the ' +
                                       'user to be retrieved'})
                 def get(self, user_id):
+                        '''Shows details of a user'''
                         return [user_id], 200
 
                 @user_api.response(200, 'Success')
@@ -103,6 +122,7 @@ def init_api_routes(app):
                                       'user to be updated'})
                 @user_api.expect(add_user)
                 def put(self, user_id):
+                        '''Updates details of a user'''
                         return {"message": "User Updated Successfully"}, 200
 
                 @user_api.response(204, 'No Content')
@@ -110,6 +130,7 @@ def init_api_routes(app):
                 @user_api.doc(params={'user_id': 'The user_id of the ' +
                                       'user to be deleted'})
                 def delete(self, user_id):
+                        '''Deletes a user'''
                         return {"message": "User Deleted Successfully"}, 204
 
         @user_api.route('/api/users')
@@ -118,6 +139,7 @@ def init_api_routes(app):
                 @user_api.response(400, 'Validation Error')
                 @user_api.expect(add_user)
                 def post(self):
+                        '''Creates a user'''
                         return {"message": "User Created Successfully"}, 201
 
         @note_api.route('/api/notes/<int:note_id>')
@@ -127,6 +149,7 @@ def init_api_routes(app):
                 @note_api.doc(params={'note_id': 'The note_id of the ' +
                                       'note'})
                 def get(self, note_id):
+                        '''Shows details of a note'''
                         return {"note": str(note_id)}, 200
 
                 @note_api.response(200, 'Success')
@@ -135,6 +158,7 @@ def init_api_routes(app):
                                       'note to be updated'})
                 @note_api.expect(add_user)
                 def put(self, note_id):
+                        '''Updates details of a note'''
                         return {"message": "Notes Updated Successfully"}, 200
 
                 @note_api.response(204, 'No Content')
@@ -142,6 +166,7 @@ def init_api_routes(app):
                 @note_api.doc(params={'note_id': 'The note_id of the ' +
                                       'note to be deleted'})
                 def delete(self, note_id):
+                        '''Deletes a note'''
                         return {"message": "Notes Deleted Successfully"}, 204
 
         @note_api.route('/api/notes')
@@ -150,6 +175,7 @@ def init_api_routes(app):
                 @note_api.response(400, 'Validation Error')
                 @note_api.expect(add_note)
                 def post(self):
+                        '''Creates a note'''
                         return {"message": "Notes Created Successfully"}, 201
 
         @loan_api.route('/api/users/<int:user_id>/loans')
@@ -159,12 +185,14 @@ def init_api_routes(app):
                 @loan_api.doc(params={'user_id': 'The user_id of the ' +
                                       'loans to be retrieved for'})
                 def get(self, user_id):
+                        '''Shows details of a loan'''
                         return [user_id], 200
 
                 @loan_api.response(201, 'Created')
                 @loan_api.response(400, 'Validation Error')
                 @loan_api.expect(add_loan)
                 def post(self):
+                        '''Creates a loan'''
                         return {"message": "User Created Successfully"}, 201
 
         @loan_api.route('/api/loans/<int:loan_id>')
@@ -175,6 +203,7 @@ def init_api_routes(app):
                                       'loan to be updated'})
                 @loan_api.expect(add_loan)
                 def put(self, loan_id):
+                        '''Updates a loan'''
                         return {"message": "Loan Updated Successfully"}, 200
 
                 @loan_api.response(204, 'No Content')
@@ -182,6 +211,7 @@ def init_api_routes(app):
                 @loan_api.doc(params={'loan_id': 'The loan_id of the ' +
                                       'loan to be deleted'})
                 def delete(self, loan_id):
+                        '''Deletes a loan'''
                         return {"message": "Loan Deleted Successfully"}, 204
 
         @list_api.route('/api/users/<int:user_id>/lists')
@@ -191,12 +221,14 @@ def init_api_routes(app):
                 @list_api.doc(params={'user_id': 'The user_id of the ' +
                                       'lists to be retrieved for'})
                 def get(self, user_id):
+                        '''Shows a list'''
                         return [user_id], 200
 
                 @list_api.response(201, 'Created')
                 @list_api.response(400, 'Validation Error')
                 @list_api.expect(add_list)
                 def post(self):
+                        '''Creates a list'''
                         return {"message": "List Created Successfully"}, 201
 
         @list_api.route('/api/lists/<int:list_id>')
@@ -207,6 +239,7 @@ def init_api_routes(app):
                                       'list to be updated'})
                 @list_api.expect(add_loan)
                 def put(self, list_id):
+                        '''Updates a list'''
                         return {"message": "List Updated Successfully"}, 200
 
                 @list_api.response(204, 'No Content')
@@ -214,4 +247,5 @@ def init_api_routes(app):
                 @list_api.doc(params={'list_id': 'The list_id of the ' +
                                       'list to be deleted'})
                 def delete(self, list_id):
+                        '''Deletes a list'''
                         return {"message": "List Deleted Successfully"}, 204
