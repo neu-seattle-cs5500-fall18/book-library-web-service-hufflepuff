@@ -30,7 +30,8 @@ def init_api_routes(app):
         search_book = api.model('Book', {
                 'author': fields.String,
                 'subject': fields.String,
-                'published_date': fields.DateTime
+                'published_date_from': fields.DateTime,
+                'published_date_to': fields.DateTime
                 })
 
         add_user = api.model('User', {
@@ -67,7 +68,7 @@ def init_api_routes(app):
                 @book_api.doc(params={'book_id': 'The book_id of the ' +
                                       'book to be retrieved'})
                 def get(self, book_id):
-                        '''Shows a list of all books'''
+                        '''Shows the details of a book'''
                         return [book_id], 200
 
                 @book_api.response(200, 'Success')
@@ -95,6 +96,12 @@ def init_api_routes(app):
                 def post(self):
                         '''Creates a book'''
                         return {"message": "Book Added Successfully"}, 201
+
+                @book_api.response(200, 'Success')
+                @book_api.response(201, 'No Content')
+                def get(self):
+                        '''Shows a list of all books'''
+                        return ["all books"], 200
 
         @book_api.route('/search')
         class SearchBooks(Resource):
@@ -178,19 +185,27 @@ def init_api_routes(app):
                         '''Creates a note'''
                         return {"message": "Notes Created Successfully"}, 201
 
-        @loan_api.route('/<int:user_id>/loans')
-        class AddLoans(Resource):
+        @loan_api.route('')
+        class AllLoans(Resource):
                 @loan_api.response(200, 'Success')
                 @loan_api.response(404, 'Not Found')
-                @loan_api.doc(params={'user_id': 'The user_id of the ' +
+                def get(self):
+                        '''Shows details of all loans'''
+                        return ["All Loans"], 200
+
+        @user_api.route('/<int:user_id>/loans')
+        class AddLoans(Resource):
+                @user_api.response(200, 'Success')
+                @user_api.response(404, 'Not Found')
+                @user_api.doc(params={'user_id': 'The user_id of the ' +
                                       'loans to be retrieved for'})
                 def get(self, user_id):
                         '''Shows details of a loan'''
                         return [user_id], 200
 
-                @loan_api.response(201, 'Created')
-                @loan_api.response(400, 'Validation Error')
-                @loan_api.expect(add_loan)
+                @user_api.response(201, 'Created')
+                @user_api.response(400, 'Validation Error')
+                @user_api.expect(add_loan)
                 def post(self):
                         '''Creates a loan'''
                         return {"message": "User Created Successfully"}, 201
@@ -214,19 +229,19 @@ def init_api_routes(app):
                         '''Deletes a loan'''
                         return {"message": "Loan Deleted Successfully"}, 204
 
-        @list_api.route('/<int:user_id>/lists')
+        @user_api.route('/<int:user_id>/lists')
         class AddLists(Resource):
-                @list_api.response(200, 'Success')
-                @list_api.response(404, 'Not Found')
-                @list_api.doc(params={'user_id': 'The user_id of the ' +
+                @user_api.response(200, 'Success')
+                @user_api.response(404, 'Not Found')
+                @user_api.doc(params={'user_id': 'The user_id of the ' +
                                       'lists to be retrieved for'})
                 def get(self, user_id):
                         '''Shows a list'''
                         return [user_id], 200
 
-                @list_api.response(201, 'Created')
-                @list_api.response(400, 'Validation Error')
-                @list_api.expect(add_list)
+                @user_api.response(201, 'Created')
+                @user_api.response(400, 'Validation Error')
+                @user_api.expect(add_list)
                 def post(self):
                         '''Creates a list'''
                         return {"message": "List Created Successfully"}, 201
