@@ -11,12 +11,12 @@ def init_api_routes(app):
     if app:
         api = Api(app)
 
-        book_api = api.namespace('book', description='Operations on books')
-        user_api = api.namespace('user', description='Operations on users')
-        loan_api = api.namespace('loan', description='Operations on loans')
-        list_api = api.namespace('list', description='Operations on' +
+        book_api = api.namespace('books', description='Operations on books')
+        user_api = api.namespace('users', description='Operations on users')
+        loan_api = api.namespace('loans', description='Operations on loans')
+        list_api = api.namespace('lists', description='Operations on' +
                                  ' book lists')
-        note_api = api.namespace('note', description='Operations on' +
+        note_api = api.namespace('notes', description='Operations on' +
                                  ' book notes')
 
         add_book = api.model('Book', {
