@@ -185,6 +185,18 @@ def init_api_routes(app):
                         '''Creates a note'''
                         return {"message": "Notes Created Successfully"}, 201
 
+        @user_api.route('/<int:user_id>/books/<int:book_id>/notes')
+        class AddNotes(Resource):
+                @user_api.response(200, 'Success')
+                @user_api.response(404, 'Not Found')
+                @user_api.doc(params={'user_id': 'The user_id of the ' +
+                                      'user'},
+                                     {'book_id': 'The book_id of the ' +
+                                      'book'})
+                def get(self, user_id, book_id):
+                        '''Get details of a note using user_id and book_id'''
+                        return {"note": str(user_id) + " " + str(book_id)}, 200
+
         @loan_api.route('')
         class AllLoans(Resource):
                 @loan_api.response(200, 'Success')
