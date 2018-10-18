@@ -27,7 +27,7 @@ def init_api_routes(app):
                 'published_date': fields.DateTime
                 })
 
-        search_book = api.model('Book', {
+        search_book = api.model('Search_Book', {
                 'author': fields.String,
                 'subject': fields.String,
                 'published_date_from': fields.DateTime,
