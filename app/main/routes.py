@@ -11,10 +11,10 @@ def init_api_routes(app):
     if app:
         api = Api(app)
 
-        book_api = api.namespace('book', description='Operations on books')
-        user_api = api.namespace('user', description='Operations on users')
-        loan_api = api.namespace('loan', description='Operations on loans')
-        list_api = api.namespace('list', description='Operations on' +
+        book_api = api.namespace('books', description='Operations on books')
+        user_api = api.namespace('users', description='Operations on users')
+        loan_api = api.namespace('loans', description='Operations on loans')
+        list_api = api.namespace('lists', description='Operations on' +
                                  ' book lists')
         note_api = api.namespace('notes', description='Operations on' +
                                  ' book notes')
@@ -60,7 +60,7 @@ def init_api_routes(app):
                 'notes': fields.String
                 })
 
-        @book_api.route('/api/books/<int:book_id>')
+        @book_api.route('/<int:book_id>')
         class GetBooks(Resource):
                 @book_api.response(200, 'Success')
                 @book_api.response(404, 'Not Found')
@@ -87,7 +87,7 @@ def init_api_routes(app):
                         '''Deletes the book'''
                         return {"message": "Book Deleted Successfully"}, 204
 
-        @book_api.route('/api/books')
+        @book_api.route('')
         class AddBooks(Resource):
                 @book_api.response(201, 'Created')
                 @book_api.response(400, 'Validation Error')
@@ -96,7 +96,7 @@ def init_api_routes(app):
                         '''Creates a book'''
                         return {"message": "Book Added Successfully"}, 201
 
-        @book_api.route('/api/books/search')
+        @book_api.route('/search')
         class SearchBooks(Resource):
                 @book_api.response(200, 'Success')
                 @book_api.response(201, 'No Content')
@@ -106,7 +106,7 @@ def init_api_routes(app):
                         '''Searches for a book'''
                         return {"message": "Matching books"}, 200
 
-        @user_api.route('/api/users/<int:user_id>')
+        @user_api.route('/<int:user_id>')
         class GetUsers(Resource):
                 @user_api.response(200, 'Success')
                 @user_api.response(404, 'Not Found')
@@ -133,7 +133,7 @@ def init_api_routes(app):
                         '''Deletes a user'''
                         return {"message": "User Deleted Successfully"}, 204
 
-        @user_api.route('/api/users')
+        @user_api.route('')
         class AddUsers(Resource):
                 @user_api.response(201, 'Created')
                 @user_api.response(400, 'Validation Error')
@@ -142,7 +142,7 @@ def init_api_routes(app):
                         '''Creates a user'''
                         return {"message": "User Created Successfully"}, 201
 
-        @note_api.route('/api/notes/<int:note_id>')
+        @note_api.route('/<int:note_id>')
         class GetNotes(Resource):
                 @note_api.response(200, 'Success')
                 @note_api.response(404, 'Not Found')
@@ -169,7 +169,7 @@ def init_api_routes(app):
                         '''Deletes a note'''
                         return {"message": "Notes Deleted Successfully"}, 204
 
-        @note_api.route('/api/notes')
+        @note_api.route('')
         class AddNotes(Resource):
                 @note_api.response(201, 'Created')
                 @note_api.response(400, 'Validation Error')
@@ -178,7 +178,7 @@ def init_api_routes(app):
                         '''Creates a note'''
                         return {"message": "Notes Created Successfully"}, 201
 
-        @loan_api.route('/api/users/<int:user_id>/loans')
+        @loan_api.route('/<int:user_id>/loans')
         class AddLoans(Resource):
                 @loan_api.response(200, 'Success')
                 @loan_api.response(404, 'Not Found')
@@ -195,7 +195,7 @@ def init_api_routes(app):
                         '''Creates a loan'''
                         return {"message": "User Created Successfully"}, 201
 
-        @loan_api.route('/api/loans/<int:loan_id>')
+        @loan_api.route('/<int:loan_id>')
         class GetLoans(Resource):
                 @loan_api.response(200, 'Success')
                 @loan_api.response(400, 'Validation Error')
@@ -214,7 +214,7 @@ def init_api_routes(app):
                         '''Deletes a loan'''
                         return {"message": "Loan Deleted Successfully"}, 204
 
-        @list_api.route('/api/users/<int:user_id>/lists')
+        @list_api.route('/<int:user_id>/lists')
         class AddLists(Resource):
                 @list_api.response(200, 'Success')
                 @list_api.response(404, 'Not Found')
@@ -231,7 +231,7 @@ def init_api_routes(app):
                         '''Creates a list'''
                         return {"message": "List Created Successfully"}, 201
 
-        @list_api.route('/api/lists/<int:list_id>')
+        @list_api.route('/<int:list_id>')
         class GetLists(Resource):
                 @list_api.response(200, 'Success')
                 @list_api.response(400, 'Validation Error')
