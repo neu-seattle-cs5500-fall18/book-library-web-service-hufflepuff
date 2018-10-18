@@ -29,7 +29,7 @@ def init_api_routes(app):
 
         search_book = api.model('Book', {
                 'author': fields.String,
-                'subject': fields.String
+                'subject': fields.String,
                 'published_date': fields.DateTime
                 })
 
