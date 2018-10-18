@@ -200,7 +200,7 @@ def init_api_routes(app):
                 @user_api.doc(params={'user_id': 'The user_id of the ' +
                                       'loans to be retrieved for'})
                 def get(self, user_id):
-                        '''Shows details of a loan'''
+                        '''Shows details of all loans of the user'''
                         return [user_id], 200
 
                 @user_api.response(201, 'Created')
