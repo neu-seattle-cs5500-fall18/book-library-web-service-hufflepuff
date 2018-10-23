@@ -27,11 +27,10 @@ We will be using the following tools this semester:
 2. Flask (simple web framework)
 3. Sphinx (for overall documentation)
 4. PostgreSQL (for data storage)
-5. Heroku (for deployments)
+5. Heroku (for CI/CD (deployments))
 6. Github (for source control)
 7. Swagger (for API documentation)
 8. JSON (for API interoperability)
-9. Heroku
 
 ## Deliverables
  A functional and deployed API that manages to enable the user stories listed above. 
