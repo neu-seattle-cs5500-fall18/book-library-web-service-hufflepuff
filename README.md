@@ -28,7 +28,7 @@ We will be using the following tools this semester:
 3. Sphinx (for overall documentation)
 4. PostgreSQL (for data storage)
 5. Heroku (for deployments)
-6. Bitbucket (for source control)
+6. Github (for source control)
 7. Swagger (for API documentation)
 8. JSON (for API interoperability)
 9. Heroku
