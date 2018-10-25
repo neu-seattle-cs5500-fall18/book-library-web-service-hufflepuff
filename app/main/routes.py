@@ -334,7 +334,7 @@ def init_api_routes(app):
                 @user_api.response(201, 'Created')
                 @user_api.response(400, 'Validation Error')
                 @user_api.expect(add_loan)
-                def post(self):
+                def post(self, user_id):
                         '''Creates a loan'''
                         data = request.json
                         if 'book_id' in data:
