@@ -17,9 +17,8 @@ class Loan(Model):
     borrowed_date = Column(Date, nullable=False)
     return_date = Column(Date)
 
-    def __init__(self, loan_id, book_id, user_id, status,
+    def __init__(self, book_id, user_id, status,
                  borrowed_date, return_date):
-        self.loan_id = loan_id
         self.book_id = book_id
         self.user_id = user_id
         self.status = status
@@ -32,8 +31,8 @@ class Loan(Model):
             "http://schema.org/book_id": self.book_id,
             "http://schema.org/user_id": self.user_id,
             "http://schema.org/status": self.status,
-            "http://schema.org/borrowed_date": self.borrowed_date,
-            "http://schema.org/return_date": self.return_date
+            "http://schema.org/borrowed_date": str(self.borrowed_date),
+            "http://schema.org/return_date": str(self.return_date)
         }, self.get_context())
         del compacted_json['@context']
         return compacted_json

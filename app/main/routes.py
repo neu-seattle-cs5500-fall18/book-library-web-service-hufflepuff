@@ -10,14 +10,26 @@ from .models.list import List
 from .models.listitem import Listitem
 
 from .middleware import get_books
-from .middleware import search_books
-from .middleware import get_book
-from .middleware import delete_book
-from .middleware import put_book
-from .middleware import get_user
 from .middleware import get_users
+from .middleware import get_loans
+from .middleware import get_userloans
+from .middleware import search_books
+from .middleware import find_note
+from .middleware import delete_book
+from .middleware import delete_user
+from .middleware import delete_note
+from .middleware import delete_loan
+from .middleware import put_book
+from .middleware import put_user
+from .middleware import put_note
+from .middleware import get_book
+from .middleware import get_user
+from .middleware import get_note
+from .middleware import get_loan
 from .middleware import add_books
 from .middleware import add_users
+from .middleware import add_notes
+from .middleware import add_loans
 
 
 def init_api_routes(app):
@@ -93,7 +105,6 @@ def init_api_routes(app):
                         '''Updates a book'''
                         data = request.json
                         book = get_book(book_id)
-                        print(book.serialize())
                         if 'name' in data:
                                 book.name = data['name']
                         if 'author' in data:
@@ -181,7 +192,7 @@ def init_api_routes(app):
                                       'user to be retrieved'})
                 def get(self, user_id):
                         '''Shows details of a user'''
-                        return [user_id], 200
+                        return get_user(user_id).serialize(), 200
 
                 @user_api.response(200, 'Success')
                 @user_api.response(400, 'Validation Error')
@@ -190,7 +201,17 @@ def init_api_routes(app):
                 @user_api.expect(add_user)
                 def put(self, user_id):
                         '''Updates details of a user'''
-                        return {"message": "User Updated Successfully"}, 200
+                        data = request.json
+                        user = get_user(user_id)
+                        if 'name' in data:
+                                user.name = data['name']
+                        if 'email' in data:
+                                user.email = data['email']
+                        if 'phone' in data:
+                                user.phone = data['phone']
+                        if 'birth_year' in data:
+                                user.birth_year = data['birth_year']
+                        return put_user(user).serialize(), 200
 
                 @user_api.response(204, 'No Content')
                 @user_api.response(404, 'Not Found')
@@ -198,7 +219,8 @@ def init_api_routes(app):
                                       'user to be deleted'})
                 def delete(self, user_id):
                         '''Deletes a user'''
-                        return {"message": "User Deleted Successfully"}, 204
+                        get_user(user_id)
+                        return delete_user(user_id), 204
 
         @user_api.route('')
         class AddUsers(Resource):
@@ -207,7 +229,19 @@ def init_api_routes(app):
                 @user_api.expect(add_user)
                 def post(self):
                         '''Creates a user'''
-                        return {"message": "User Created Successfully"}, 201
+                        data = request.json
+                        if 'name' in data:
+                                name = data['name']
+                        if 'email' in data:
+                                email = data['email']
+                        if 'phone' in data:
+                                phone = data['phone']
+                        if 'birth_year' in data:
+                                birth_year = data['birth_year']
+
+                        user = User(name=name, email=email,
+                                    phone=phone, birth_year=birth_year)
+                        return add_users(user).serialize(), 201
 
         @note_api.route('/<int:note_id>')
         class GetNotes(Resource):
@@ -217,16 +251,26 @@ def init_api_routes(app):
                                       'note'})
                 def get(self, note_id):
                         '''Shows details of a note'''
-                        return {"note": str(note_id)}, 200
+                        return get_note(note_id).serialize(), 200
 
                 @note_api.response(200, 'Success')
                 @note_api.response(400, 'Validation Error')
                 @note_api.doc(params={'note_id': 'The note_id of the ' +
                                       'note to be updated'})
-                @note_api.expect(add_user)
+                @note_api.expect(add_note)
                 def put(self, note_id):
                         '''Updates details of a note'''
-                        return {"message": "Notes Updated Successfully"}, 200
+                        data = request.json
+                        note = get_note(note_id)
+                        if 'book_id' in data:
+                                note.book_id = data['book_id']
+                                get_book(note.book_id)
+                        if 'user_id' in data:
+                                note.user_id = data['user_id']
+                                get_user(note.user_id)
+                        if 'notes' in data:
+                                note.notes = data['notes']
+                        return put_note(note).serialize(), 200
 
                 @note_api.response(204, 'No Content')
                 @note_api.response(404, 'Not Found')
@@ -234,7 +278,8 @@ def init_api_routes(app):
                                       'note to be deleted'})
                 def delete(self, note_id):
                         '''Deletes a note'''
-                        return {"message": "Notes Deleted Successfully"}, 204
+                        get_note(note_id)
+                        return delete_note(note_id), 204
 
         @note_api.route('')
         class AddNotes(Resource):
@@ -243,7 +288,19 @@ def init_api_routes(app):
                 @note_api.expect(add_note)
                 def post(self):
                         '''Creates a note'''
-                        return {"message": "Notes Created Successfully"}, 201
+                        data = request.json
+                        if 'book_id' in data:
+                                book_id = data['book_id']
+                                get_book(book_id)
+                        if 'user_id' in data:
+                                user_id = data['user_id']
+                                get_user(user_id)
+                        if 'notes' in data:
+                                notes = data['notes']
+
+                        note = Notes(book_id=book_id, user_id=user_id,
+                                     notes=notes)
+                        return add_notes(note).serialize(), 201
 
         @user_api.route('/<int:user_id>/books/<int:book_id>/notes')
         class AddNotes(Resource):
@@ -253,7 +310,7 @@ def init_api_routes(app):
                 @user_api.param('book_id', 'The book_id of the book')
                 def get(self, user_id, book_id):
                         '''Get details of a note using user_id and book_id'''
-                        return {"note": str(user_id) + " " + str(book_id)}, 200
+                        return find_note(user_id, book_id).serialize(), 200
 
         @loan_api.route('')
         class AllLoans(Resource):
@@ -261,7 +318,7 @@ def init_api_routes(app):
                 @loan_api.response(404, 'Not Found')
                 def get(self):
                         '''Shows details of all loans'''
-                        return ["All Loans"], 200
+                        return get_loans(), 200
 
         @user_api.route('/<int:user_id>/loans')
         class AddLoans(Resource):
@@ -271,14 +328,32 @@ def init_api_routes(app):
                                       'loans to be retrieved for'})
                 def get(self, user_id):
                         '''Shows details of all loans of the user'''
-                        return [user_id], 200
+                        get_user(user_id)
+                        return get_userloans(user_id), 200
 
                 @user_api.response(201, 'Created')
                 @user_api.response(400, 'Validation Error')
                 @user_api.expect(add_loan)
                 def post(self):
                         '''Creates a loan'''
-                        return {"message": "User Created Successfully"}, 201
+                        data = request.json
+                        if 'book_id' in data:
+                                book_id = data['book_id']
+                                get_book(book_id)
+                        if 'user_id' in data:
+                                user_id = data['user_id']
+                                get_user(user_id)
+                        if 'status' in data:
+                                status = data['status']
+                        if 'borrowed_date' in data:
+                                borrowed_date = data['borrowed_date']
+                        if 'return_date' in data:
+                                return_date = data['return_date']
+
+                        loan = Loan(book_id=book_id, user_id=user_id,
+                                    status=status, borrowed_date=borrowed_date,
+                                    return_date=return_date)
+                        return add_loans(loan).serialize(), 201
 
         @loan_api.route('/<int:loan_id>')
         class GetLoans(Resource):
@@ -289,7 +364,21 @@ def init_api_routes(app):
                 @loan_api.expect(add_loan)
                 def put(self, loan_id):
                         '''Updates a loan'''
-                        return {"message": "Loan Updated Successfully"}, 200
+                        data = request.json
+                        loan = get_loan(loan_id)
+                        if 'book_id' in data:
+                                loan.book_id = data['book_id']
+                                get_book(loan.book_id)
+                        if 'user_id' in data:
+                                loan.user_id = data['user_id']
+                                get_user(loan.user_id)
+                        if 'status' in data:
+                                loan.status = data['status']
+                        if 'borrowed_date' in data:
+                                loan.borrowed_date = data['borrowed_date']
+                        if 'return_date' in data:
+                                loan.return_date = data['return_date']
+                        return put_loan(loan).serialize(), 200
 
                 @loan_api.response(204, 'No Content')
                 @loan_api.response(404, 'Not Found')
@@ -297,7 +386,16 @@ def init_api_routes(app):
                                       'loan to be deleted'})
                 def delete(self, loan_id):
                         '''Deletes a loan'''
-                        return {"message": "Loan Deleted Successfully"}, 204
+                        get_loan(loan_id)
+                        return delete_loan(loan_id), 204
+
+                @loan_api.response(200, 'Success')
+                @loan_api.response(404, 'Not Found')
+                @loan_api.doc(params={'loan_id': 'The loan_id of the ' +
+                                      'loan to be retrieved'})
+                def get(self, loan_id):
+                        '''Shows details of the loan'''
+                        return get_loan(loan_id).serialize(), 200
 
         @user_api.route('/<int:user_id>/lists')
         class AddLists(Resource):

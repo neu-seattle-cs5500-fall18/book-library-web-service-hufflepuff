@@ -40,6 +40,22 @@ class DataProviderService:
         book_list = [book.serialize() for book in all_books]
         return book_list
 
+    def get_loans(self):
+        """
+        :return: The loans.
+        """
+        all_loans = self.session.query(Loan).all()
+        loan_list = [loan.serialize() for loan in all_loans]
+        return loan_list
+
+    def get_userloans(self, user_id):
+        """
+        :return: The loans.
+        """
+        all_loans = self.session.query(Loan).filter_by(user_id=user_id).all()
+        loan_list = [loan.serialize() for loan in all_loans]
+        return loan_list
+
     def put_book(self, book):
         """
         :return: The books.
@@ -49,12 +65,59 @@ class DataProviderService:
         the_book = self.session.query(Library).filter_by(book_id=book.book_id).first()
         return the_book
 
+    def put_user(self, user):
+        """
+        :return: The updated user.
+        """
+        self.session.add(user)
+        self.session.commit()
+        the_user = self.session.query(User).filter_by(user_id=user.user_id).first()
+        return the_user
+
+    def put_note(self, note):
+        """
+        :return: The updated note.
+        """
+        self.session.add(note)
+        self.session.commit()
+        the_note = self.session.query(Notes).filter_by(note_id=note.note_id).first()
+        return the_note
+
     def get_book(self, book_id):
         """
         :return: The books.
         """
         the_book = self.session.query(Library).filter_by(book_id=book_id).first()
         return the_book
+
+    def get_user(self, user_id):
+        """
+        :return: The user.
+        """
+        the_user = self.session.query(User).filter_by(user_id=user_id).first()
+        return the_user
+
+    def get_note(self, note_id):
+        """
+        :return: The notes.
+        """
+        the_note = self.session.query(Notes).filter_by(note_id=note_id).first()
+        return the_note
+
+    def get_loan(self, loan_id):
+        """
+        :return: The loan.
+        """
+        the_loan = self.session.query(Loan).filter_by(loan_id=loan_id).first()
+        return the_loan
+
+    def find_note(self, user_id, book_id):
+        """
+        :return: The notes.
+        """
+        the_note = self.session.query(Notes).filter_by(user_id=user_id,
+                                                       book_id=book_id).first()
+        return the_note
 
     def search_books(self, author, subject, published_date_from, published_date_to):
         """
@@ -71,7 +134,6 @@ class DataProviderService:
             query = query.filter(Library.published_date <= published_date_to)
 
         all_books = query.all()
-        print(all_books)
         book_list = [book.serialize() for book in all_books]
         return book_list
 
@@ -83,6 +145,33 @@ class DataProviderService:
         self.session.delete(the_book)
         self.session.commit()
         return "Deleted the book"
+
+    def delete_user(self, user_id):
+        """
+        :return: The user to be deleted.
+        """
+        the_user = self.session.query(User).filter_by(user_id=user_id).first()
+        self.session.delete(the_user)
+        self.session.commit()
+        return "Deleted the user"
+
+    def delete_note(self, note_id):
+        """
+        :return: The note to be deleted.
+        """
+        the_note = self.session.query(Notes).filter_by(note_id=note_id).first()
+        self.session.delete(the_note)
+        self.session.commit()
+        return "Deleted the notes"
+
+    def delete_loan(self, loan_id):
+        """
+        :return: The loan to be deleted.
+        """
+        the_loan = self.session.query(Loan).filter_by(loan_id=loan_id).first()
+        self.session.delete(the_loan)
+        self.session.commit()
+        return "Deleted the loan"
 
     def get_users(self):
         """
@@ -104,17 +193,36 @@ class DataProviderService:
                                                          status=book.status).first()
         return the_book
 
-    def add_users(self, name, email, phone,
-                  birth_year):
+    def add_user(self, user):
         """
         :return: The user added with user_id.
         """
-        new_user = User(name=name,
-                        email=email,
-                        phone=phone,
-                        birth_year=birth_year)
-
-        self.session.add(new_user)
+        self.session.add(user)
         self.session.commit()
+        the_user = self.session.query(Library).filter_by(name=user.name,
+                                                         email=user.email,
+                                                         phone=user.phone,
+                                                         birth_year=user.birth_year).first()
+        return the_user
 
-        return new_user.user_id
+    def add_note(self, note):
+        """
+        :return: The note added with note_id.
+        """
+        self.session.add(note)
+        self.session.commit()
+        the_note = self.session.query(Notes).filter_by(book_id=note.book_id,
+                                                       user_id=note.user_id,
+                                                       notes=note.notes).first()
+        return the_note
+
+    def add_loan(self, loan):
+        """
+        :return: The loan added with loan_id.
+        """
+        self.session.add(loan)
+        self.session.commit()
+        the_loan = self.session.query(Loan).filter_by(book_id=loan.book_id,
+                                                      user_id=loan.user_id,
+                                                      status=loan.status).first()
+        return the_loan
