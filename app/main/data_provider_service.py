@@ -34,11 +34,55 @@ class DataProviderService:
 
     def get_books(self):
         """
-        :return: The users.
+        :return: The books.
         """
-        all_books = []
         all_books = self.session.query(Library).all()
-        return [book.serialize() for book in all_books]
+        book_list = [book.serialize() for book in all_books]
+        return book_list
+
+    def put_book(self, book):
+        """
+        :return: The books.
+        """
+        self.session.add(book)
+        self.session.commit()
+        the_book = self.session.query(Library).filter_by(book_id=book.book_id).first()
+        return the_book
+
+    def get_book(self, book_id):
+        """
+        :return: The books.
+        """
+        the_book = self.session.query(Library).filter_by(book_id=book_id).first()
+        return the_book
+
+    def search_books(self, author, subject, published_date_from, published_date_to):
+        """
+        :return: The books matching the search crieteria.
+        """
+        query = self.session.query(Library)
+        if author:
+            query = query.filter_by(author=author)
+        if subject:
+            query = query.filter_by(subject=subject)
+        if published_date_from:
+            query = query.filter(Library.published_date >= published_date_from)
+        if published_date_to:
+            query = query.filter(Library.published_date <= published_date_to)
+
+        all_books = query.all()
+        print(all_books)
+        book_list = [book.serialize() for book in all_books]
+        return book_list
+
+    def delete_book(self, book_id):
+        """
+        :return: The books.
+        """
+        the_book = self.session.query(Library).filter_by(book_id=book_id).first()
+        self.session.delete(the_book)
+        self.session.commit()
+        return "Deleted the book"
 
     def get_users(self):
         """
@@ -48,21 +92,17 @@ class DataProviderService:
         all_users = self.session.query(User).all()
         return [user.serialize() for user in all_users]
 
-    def add_books(self, name, author, subject,
-                  status, published_date):
+    def add_book(self, book):
         """
         :return: The book added with book_id.
         """
-        new_book = Library(name=name,
-                           author=author,
-                           subject=subject,
-                           status=status,
-                           published_date=published_date)
-
-        self.session.add(new_book)
+        self.session.add(book)
         self.session.commit()
-
-        return new_book.book_id
+        the_book = self.session.query(Library).filter_by(name=book.name,
+                                                         author=book.author,
+                                                         subject=book.subject,
+                                                         status=book.status).first()
+        return the_book
 
     def add_users(self, name, email, phone,
                   birth_year):

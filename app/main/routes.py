@@ -1,6 +1,19 @@
 from .middleware import initialize_database as init_db
 from flask_restplus import Api, Resource, fields
+from flask import abort, jsonify, make_response, request, url_for
+
+from .models.user import User
+from .models.library import Library
+from .models.notes import Notes
+from .models.loan import Loan
+from .models.list import List
+from .models.listitem import Listitem
+
 from .middleware import get_books
+from .middleware import search_books
+from .middleware import get_book
+from .middleware import delete_book
+from .middleware import put_book
 from .middleware import get_user
 from .middleware import get_users
 from .middleware import add_books
@@ -69,7 +82,7 @@ def init_api_routes(app):
                                       'book to be retrieved'})
                 def get(self, book_id):
                         '''Shows the details of a book'''
-                        return [book_id], 200
+                        return get_book(book_id).serialize(), 200
 
                 @book_api.response(200, 'Success')
                 @book_api.response(400, 'Validation Error')
@@ -78,7 +91,21 @@ def init_api_routes(app):
                 @book_api.expect(add_book)
                 def put(self, book_id):
                         '''Updates a book'''
-                        return {"message": "Book Updated Successfully"}, 200
+                        data = request.json
+                        book = get_book(book_id)
+                        print(book.serialize())
+                        if 'name' in data:
+                                book.name = data['name']
+                        if 'author' in data:
+                                book.author = data['author']
+                        if 'subject' in data:
+                                book.subject = data['subject']
+                        if 'status' in data:
+                                book.status = data['status']
+                        if 'published_date' in data:
+                                book.published_date = data['published_date']
+
+                        return put_book(book).serialize(), 200
 
                 @book_api.response(204, 'No Content')
                 @book_api.response(404, 'Not Found')
@@ -86,7 +113,8 @@ def init_api_routes(app):
                                       'book to be deleted'})
                 def delete(self, book_id):
                         '''Deletes the book'''
-                        return {"message": "Book Deleted Successfully"}, 204
+                        get_book(book_id)
+                        return delete_book(book_id), 204
 
         @book_api.route('')
         class AddBooks(Resource):
@@ -95,13 +123,28 @@ def init_api_routes(app):
                 @book_api.expect(add_book)
                 def post(self):
                         '''Creates a book'''
-                        return {"message": "Book Added Successfully"}, 201
+                        data = request.json
+                        if 'name' in data:
+                                name = data['name']
+                        if 'author' in data:
+                                author = data['author']
+                        if 'subject' in data:
+                                subject = data['subject']
+                        if 'status' in data:
+                                status = data['status']
+                        if 'published_date' in data:
+                                published_date = data['published_date']
+
+                        book = Library(name=name, author=author,
+                                       subject=subject, status=status,
+                                       published_date=published_date)
+                        return add_books(book).serialize(), 201
 
                 @book_api.response(200, 'Success')
                 @book_api.response(201, 'No Content')
                 def get(self):
                         '''Shows a list of all books'''
-                        return ["all books"], 200
+                        return get_books(), 200
 
         @book_api.route('/search')
         class SearchBooks(Resource):
@@ -111,7 +154,24 @@ def init_api_routes(app):
                 @book_api.expect(search_book)
                 def post(self):
                         '''Searches for a book'''
-                        return {"message": "Matching books"}, 200
+                        data = request.json
+                        if 'author' in data:
+                                author = data['author']
+                        else:
+                                author = None
+                        if 'subject' in data:
+                                subject = data['subject']
+                        else:
+                                subject = None
+                        if 'published_date_from' in data:
+                                published_date_from = data['published_date_from']
+                        else:
+                                published_date_from = None
+                        if 'published_date_to' in data:
+                                published_date_to = data['published_date_to']
+                        else:
+                                published_date_to = None
+                        return search_books(author, subject, published_date_from, published_date_to), 200
 
         @user_api.route('/<int:user_id>')
         class GetUsers(Resource):

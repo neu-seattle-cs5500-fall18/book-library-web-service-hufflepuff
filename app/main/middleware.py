@@ -4,6 +4,7 @@ import os
 
 # db_string = os.environ.get('DATABASE_URL', None)
 db_string = os.environ.get('DATABASE_URL', None)
+
 DATA_PROVIDER = DataProviderService(db_string)
 
 
@@ -40,7 +41,7 @@ def get_user(user_id):
 def get_books():
     current_books = DATA_PROVIDER.get_books()
     if current_books:
-        return jsonify(current_books)
+        return current_books
     else:
         #
         # In case we did not find any books
@@ -49,29 +50,57 @@ def get_books():
         abort(404)
 
 
-def add_books():
-    data = request.json
-    print(data)
-    name = data['name']
-    author = data['author']
-    subject = data['subject']
-    status = data['status']
-    published_date = data['published_date']
+def search_books(author, subject, published_date_from, published_date_to):
+    current_books = DATA_PROVIDER.search_books(author, subject, published_date_from, published_date_to)
+    if current_books:
+        return current_books
+    else:
+        #
+        # In case we did not find any books
+        # we send HTTP 404 - Not Found error to the client
+        #
+        abort(404)
 
-    new_book_id = DATA_PROVIDER.add_books(name=name,
-                                          author=author,
-                                          subject=subject,
-                                          status=status,
-                                          published_date=published_date)
 
-    return jsonify({
-        "id": new_book_id,
-        "name": name,
-        "author": author,
-        "subject": subject,
-        "status": status,
-        "published_date": published_date
-    })
+def get_book(book_id):
+    current_book = DATA_PROVIDER.get_book(book_id)
+    if current_book:
+        return current_book
+    else:
+        #
+        # In case we did not find any books
+        # we send HTTP 404 - Not Found error to the client
+        #
+        abort(404)
+
+
+def put_book(book):
+    current_book = DATA_PROVIDER.put_book(book)
+    if current_book:
+        return current_book
+    else:
+        #
+        # In case we did not find any books
+        # we send HTTP 404 - Not Found error to the client
+        #
+        abort(404)
+
+
+def delete_book(book):
+    status = DATA_PROVIDER.delete_book(book)
+    if status:
+        return status
+    else:
+        #
+        # In case we did not find any books
+        # we send HTTP 404 - Not Found error to the client
+        #
+        abort(404)
+
+
+def add_books(book):
+    new_book = DATA_PROVIDER.add_book(book)
+    return new_book
 
 
 def add_users():
