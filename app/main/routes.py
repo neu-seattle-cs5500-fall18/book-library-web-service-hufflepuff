@@ -22,6 +22,7 @@ from .middleware import delete_loan
 from .middleware import put_book
 from .middleware import put_user
 from .middleware import put_note
+from .middleware import put_loan
 from .middleware import get_book
 from .middleware import get_user
 from .middleware import get_note

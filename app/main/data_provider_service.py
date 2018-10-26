@@ -83,6 +83,18 @@ class DataProviderService:
         the_note = self.session.query(Notes).filter_by(note_id=note.note_id).first()
         return the_note
 
+    def put_loan(self, loan):
+        """
+        :return: The updated loan.
+        """
+        self.session.add(loan)
+        self.session.commit()
+        book = self.get_book(loan.book_id)
+        book.status = loan.status
+        self.put_book(book)
+        the_loan = self.session.query(Loan).filter_by(loan_id=loan.loan_id).first()
+        return the_loan
+
     def get_book(self, book_id):
         """
         :return: The books.
@@ -171,6 +183,9 @@ class DataProviderService:
         the_loan = self.session.query(Loan).filter_by(loan_id=loan_id).first()
         self.session.delete(the_loan)
         self.session.commit()
+        book = self.get_book(the_loan.book_id)
+        book.status = "Available"
+        self.put_book(book)
         return "Deleted the loan"
 
     def get_users(self):
@@ -222,6 +237,9 @@ class DataProviderService:
         """
         self.session.add(loan)
         self.session.commit()
+        book = self.get_book(loan.book_id)
+        book.status = loan.status
+        self.put_book(book)
         the_loan = self.session.query(Loan).filter_by(book_id=loan.book_id,
                                                       user_id=loan.user_id,
                                                       status=loan.status).first()

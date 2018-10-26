@@ -169,6 +169,18 @@ def put_note(note):
         abort(404)
 
 
+def put_loan(loan):
+    current_loan = DATA_PROVIDER.put_loan(loan)
+    if current_loan:
+        return current_loan
+    else:
+        #
+        # In case we did not find any loan
+        # we send HTTP 404 - Not Found error to the client
+        #
+        abort(404)
+
+
 def delete_book(book_id):
     status = DATA_PROVIDER.delete_book(book_id)
     if status:
