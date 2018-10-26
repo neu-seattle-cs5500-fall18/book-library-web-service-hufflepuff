@@ -341,7 +341,9 @@ def init_api_routes(app):
                         data = request.json
                         if 'book_id' in data:
                                 book_id = data['book_id']
-                                get_book(book_id)
+                                book = get_book(book_id)
+                                if book.status != "Available":
+                                        return {"message": "Book not available."}, 400
                         if 'user_id' in data:
                                 user_id = data['user_id']
                                 get_user(user_id)
