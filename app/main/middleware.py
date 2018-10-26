@@ -61,6 +61,18 @@ def get_userloans(user_id):
         abort(404)
 
 
+def get_userlists(user_id):
+    current_lists = DATA_PROVIDER.get_userlists(user_id)
+    if current_lists:
+        return current_lists
+    else:
+        #
+        # In case we did not find any lists
+        # we send HTTP 404 - Not Found error to the client
+        #
+        abort(404)
+
+
 def search_books(author, subject, published_date_from, published_date_to):
     current_books = DATA_PROVIDER.search_books(author, subject, published_date_from, published_date_to)
     if current_books:
@@ -247,3 +259,8 @@ def add_notes(note):
 def add_loans(loan):
     new_loan = DATA_PROVIDER.add_loan(loan)
     return new_loan
+
+
+def add_lists(add_list, book_ids):
+    new_list = DATA_PROVIDER.add_list(add_list, book_ids)
+    return new_list

@@ -13,6 +13,7 @@ from .middleware import get_books
 from .middleware import get_users
 from .middleware import get_loans
 from .middleware import get_userloans
+from .middleware import get_userlists
 from .middleware import search_books
 from .middleware import find_note
 from .middleware import delete_book
@@ -31,6 +32,7 @@ from .middleware import add_books
 from .middleware import add_users
 from .middleware import add_notes
 from .middleware import add_loans
+from .middleware import add_lists
 
 
 def init_api_routes(app):
@@ -76,8 +78,7 @@ def init_api_routes(app):
                 })
 
         add_list = api.model('List', {
-                'user_id': fields.Integer,
-                'book_ids': fields.Integer,
+                'book_ids': fields.List(fields.Integer),
                 'list_name': fields.String
                 })
 
@@ -307,8 +308,8 @@ def init_api_routes(app):
         class AddNotes(Resource):
                 @user_api.response(200, 'Success')
                 @user_api.response(404, 'Not Found')
-                @user_api.param('user_id', 'The user_id of the user')
-                @user_api.param('book_id', 'The book_id of the book')
+                @note_api.doc(params={'user_id': 'The user_id of the note',
+                                      'book_id': 'The user_id of the note'})
                 def get(self, user_id, book_id):
                         '''Get details of a note using user_id and book_id'''
                         return find_note(user_id, book_id).serialize(), 200
@@ -406,14 +407,24 @@ def init_api_routes(app):
                                       'lists to be retrieved for'})
                 def get(self, user_id):
                         '''Shows all lists of a user'''
-                        return [user_id], 200
+                        get_user(user_id)
+                        return get_userlists(user_id), 200
 
                 @user_api.response(201, 'Created')
                 @user_api.response(400, 'Validation Error')
                 @user_api.expect(add_list)
-                def post(self):
+                def post(self, user_id):
                         '''Creates a list'''
-                        return {"message": "List Created Successfully"}, 201
+                        data = request.json
+                        get_user(user_id)
+                        if 'book_ids' in data:
+                                book_ids = data['book_ids']
+                                [get_book(each) for each in book_ids]
+                        if 'list_name' in data:
+                                list_name = data['list_name']
+                        add_list = List(user_id=user_id,
+                                        list_name=list_name)
+                        return add_lists(add_list, book_ids).serialize(), 201
 
         @list_api.route('/<int:list_id>')
         class GetLists(Resource):

@@ -14,8 +14,7 @@ class List(Model):
     user_id = Column(Integer, ForeignKey('users.user_id'))
     list_name = Column(String(20))
 
-    def __init__(self, list_id, user_id, list_name):
-        self.list_id = list_id
+    def __init__(self, user_id, list_name):
         self.user_id = user_id
         self.list_name = list_name
 

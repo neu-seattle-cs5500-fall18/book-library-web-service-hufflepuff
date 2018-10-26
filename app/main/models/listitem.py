@@ -14,10 +14,9 @@ class Listitem(Model):
     list_id = Column(Integer, ForeignKey('list.list_id'))
     book_id = Column(Integer, ForeignKey('library.book_id'))
 
-    def __init__(self, listitem_id, list_id, book_id):
-        self.listitem_id = listitem_id
-        self.book_id = book_id
+    def __init__(self, list_id, book_id):
         self.list_id = list_id
+        self.book_id = book_id
 
     def serialize(self):
         compacted_json = jsonld.compact({

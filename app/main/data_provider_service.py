@@ -56,6 +56,20 @@ class DataProviderService:
         loan_list = [loan.serialize() for loan in all_loans]
         return loan_list
 
+    def get_userlists(self, user_id):
+        """
+        :return: The lists of a user.
+        """
+        all_lists = self.session.query(List).filter_by(user_id=user_id).all()
+        user_list = []
+        for each in all_lists:
+            list_items = self.session.query(Listitem).filter_by(list_id=each.list_id).all()
+            items = [self.get_book(item.book_id).serialize() for item in list_items]
+            add_list = each.serialize()
+            add_list['books'] = items
+            user_list += [add_list]
+        return user_list
+
     def put_book(self, book):
         """
         :return: The books.
@@ -244,3 +258,23 @@ class DataProviderService:
                                                       user_id=loan.user_id,
                                                       status=loan.status).first()
         return the_loan
+
+    def add_list(self, add_list, book_ids):
+        """
+        :return: The loan added with loan_id.
+        """
+        the_list = self.session.query(List).filter_by(user_id=add_list.user_id,
+                                                      list_name=add_list.list_name).first()
+        if not the_list:
+            self.session.add(add_list)
+            self.session.commit()
+        the_list = self.session.query(List).filter_by(user_id=add_list.user_id,
+                                                      list_name=add_list.list_name).first()
+        for book_id in book_ids:
+            listitem = Listitem(the_list.list_id, book_id)
+            the_item = self.session.query(Listitem).filter_by(list_id=the_list.list_id,
+                                                              book_id=book_id).first()
+            if not the_item:
+                self.session.add(listitem)
+        self.session.commit()
+        return the_list
