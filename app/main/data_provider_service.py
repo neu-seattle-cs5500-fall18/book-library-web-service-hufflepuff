@@ -109,6 +109,25 @@ class DataProviderService:
         the_loan = self.session.query(Loan).filter_by(loan_id=loan.loan_id).first()
         return the_loan
 
+    def put_list(self, the_list, books):
+        """
+        :return: The updated loan.
+        """
+        the_items = self.session.query(Listitem).filter_by(list_id=the_list.list_id).all()
+        for each in the_items:
+            if each.book_id not in books:
+                self.session.delete(each)
+            else:
+                books.remove(each.book_id)
+
+        for book_id in books:
+            listitem = Listitem(the_list.list_id, book_id)
+            self.session.add(listitem)
+
+        self.session.add(the_list)
+        self.session.commit()
+        return the_list
+
     def get_book(self, book_id):
         """
         :return: The books.
@@ -136,6 +155,27 @@ class DataProviderService:
         """
         the_loan = self.session.query(Loan).filter_by(loan_id=loan_id).first()
         return the_loan
+
+    def get_list(self, list_id):
+        """
+        :return: The list.
+        """
+        the_list = self.session.query(List).filter_by(list_id=list_id).first()
+        list_items = self.session.query(Listitem).filter_by(list_id=list_id).all()
+        items = [self.get_book(item.book_id).serialize() for item in list_items]
+        if the_list:
+            add_list = the_list.serialize()
+        else:
+            return None
+        add_list['books'] = items
+        return add_list
+
+    def get_list_object(self, list_id):
+        """
+        :return: The list object.
+        """
+        the_list = self.session.query(List).filter_by(list_id=list_id).first()
+        return the_list
 
     def find_note(self, user_id, book_id):
         """
@@ -201,6 +241,18 @@ class DataProviderService:
         book.status = "Available"
         self.put_book(book)
         return "Deleted the loan"
+
+    def delete_list(self, list_id):
+        """
+        :return: The list to be deleted.
+        """
+        the_items = self.session.query(Listitem).filter_by(list_id=list_id).all()
+        for each in the_items:
+            self.session.delete(each)
+        the_list = self.session.query(List).filter_by(list_id=list_id).first()
+        self.session.delete(the_list)
+        self.session.commit()
+        return "Deleted the list"
 
     def get_users(self):
         """

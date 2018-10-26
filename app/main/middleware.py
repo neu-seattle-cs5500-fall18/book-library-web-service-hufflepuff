@@ -3,6 +3,7 @@ from flask import abort, jsonify, make_response, request, url_for
 import os
 
 db_string = os.environ.get('DATABASE_URL', None)
+db_string = 'postgres://vywhwbzvzxprkq:2f7083fed0106103e25ce5300750f5a8af50678ae11710731e61692e7deab729@ec2-54-225-76-201.compute-1.amazonaws.com:5432/d58h3832oj43d6'
 
 DATA_PROVIDER = DataProviderService(db_string)
 
@@ -133,6 +134,30 @@ def get_loan(loan_id):
         abort(404)
 
 
+def get_list(list_id):
+    current_list = DATA_PROVIDER.get_list(list_id)
+    if current_list:
+        return current_list
+    else:
+        #
+        # In case we did not find any list
+        # we send HTTP 404 - Not Found error to the client
+        #
+        abort(404)
+
+
+def get_list_object(list_id):
+    current_list = DATA_PROVIDER.get_list_object(list_id)
+    if current_list:
+        return current_list
+    else:
+        #
+        # In case we did not find any list
+        # we send HTTP 404 - Not Found error to the client
+        #
+        abort(404)
+
+
 def find_note(user_id, book_id):
     current_notes = DATA_PROVIDER.find_note(user_id, book_id)
     if current_notes:
@@ -193,6 +218,18 @@ def put_loan(loan):
         abort(404)
 
 
+def put_list(the_list, books):
+    current_list = DATA_PROVIDER.put_list(the_list, books)
+    if current_list:
+        return current_list
+    else:
+        #
+        # In case we did not find any list
+        # we send HTTP 404 - Not Found error to the client
+        #
+        abort(404)
+
+
 def delete_book(book_id):
     status = DATA_PROVIDER.delete_book(book_id)
     if status:
@@ -236,6 +273,18 @@ def delete_loan(loan_id):
     else:
         #
         # In case we did not find any loan
+        # we send HTTP 404 - Not Found error to the client
+        #
+        abort(404)
+
+
+def delete_list(list_id):
+    status = DATA_PROVIDER.delete_list(list_id)
+    if status:
+        return status
+    else:
+        #
+        # In case we did not find any list
         # we send HTTP 404 - Not Found error to the client
         #
         abort(404)

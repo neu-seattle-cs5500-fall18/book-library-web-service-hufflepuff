@@ -20,14 +20,18 @@ from .middleware import delete_book
 from .middleware import delete_user
 from .middleware import delete_note
 from .middleware import delete_loan
+from .middleware import delete_list
 from .middleware import put_book
 from .middleware import put_user
 from .middleware import put_note
 from .middleware import put_loan
+from .middleware import put_list
 from .middleware import get_book
 from .middleware import get_user
 from .middleware import get_note
 from .middleware import get_loan
+from .middleware import get_list
+from .middleware import get_list_object
 from .middleware import add_books
 from .middleware import add_users
 from .middleware import add_notes
@@ -436,16 +440,24 @@ def init_api_routes(app):
                                       'list to be retrieved for'})
                 def get(self, list_id):
                         '''Shows details of a list'''
-                        return [list_id], 200
+                        return get_list(list_id), 200
 
                 @list_api.response(200, 'Success')
                 @list_api.response(400, 'Validation Error')
                 @list_api.doc(params={'list_id': 'The list_id of the ' +
                                       'list to be updated'})
-                @list_api.expect(add_loan)
+                @list_api.expect(add_list)
                 def put(self, list_id):
                         '''Updates a list'''
-                        return {"message": "List Updated Successfully"}, 200
+                        data = request.json
+                        the_list = get_list_object(list_id)
+                        print(the_list.serialize())
+                        if 'book_ids' in data:
+                                book_ids = data['book_ids']
+                                [get_book(each) for each in book_ids]
+                        if 'list_name' in data:
+                                the_list.list_name = data['list_name']
+                        return put_list(the_list, book_ids).serialize(), 200
 
                 @list_api.response(204, 'No Content')
                 @list_api.response(404, 'Not Found')
@@ -453,4 +465,5 @@ def init_api_routes(app):
                                       'list to be deleted'})
                 def delete(self, list_id):
                         '''Deletes a list'''
-                        return {"message": "List Deleted Successfully"}, 204
+                        get_list(list_id)
+                        return delete_list(list_id), 204
