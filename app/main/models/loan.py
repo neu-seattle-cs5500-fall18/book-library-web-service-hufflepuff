@@ -15,15 +15,17 @@ class Loan(Model):
     user_id = Column(Integer, ForeignKey('users.user_id'))
     status = Column(String(20))
     borrowed_date = Column(Date, nullable=False)
-    return_date = Column(Date)
+    return_by = Column(Date)
+    returned_on = Column(Date)
 
     def __init__(self, book_id, user_id, status,
-                 borrowed_date, return_date):
+                 borrowed_date, return_by, returned_on):
         self.book_id = book_id
         self.user_id = user_id
         self.status = status
         self.borrowed_date = borrowed_date
-        self.return_date = return_date
+        self.return_by = return_by
+        self.returned_on = returned_on
 
     def serialize(self):
         compacted_json = jsonld.compact({
@@ -32,7 +34,8 @@ class Loan(Model):
             "http://schema.org/user_id": self.user_id,
             "http://schema.org/status": self.status,
             "http://schema.org/borrowed_date": str(self.borrowed_date),
-            "http://schema.org/return_date": str(self.return_date)
+            "http://schema.org/return_by": str(self.return_by),
+            "http://schema.org/returned_on": str(self.returned_on)
         }, self.get_context())
         del compacted_json['@context']
         return compacted_json
@@ -45,6 +48,7 @@ class Loan(Model):
                 "user_id": "http://schema.org/user_id",
                 "status": "http://schema.org/status",
                 "borrowed_date": "http://schema.org/borrowed_date",
-                "return_date": "http://schema.org/return_date"
+                "return_by": "http://schema.org/return_by",
+                "returned_on": "http://schema.org/returned_on"
             }
         }

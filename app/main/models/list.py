@@ -12,7 +12,7 @@ class List(Model):
 
     list_id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey('users.user_id'))
-    list_name = Column(String(20))
+    list_name = Column(String(100))
 
     def __init__(self, user_id, list_name):
         self.user_id = user_id

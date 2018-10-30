@@ -1,6 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from flask import json
+from flask_mail import Message, Mail
+from smtplib import SMTP
 
 from .models.user import User
 from .models.library import Library
@@ -21,9 +23,17 @@ class DataProviderService:
         if not engine:
             raise ValueError('Values not supported by SQLAlchemy')
         self.engine = engine
+        self.app = None
         db_engine = create_engine(engine)
         db_session = sessionmaker(bind=db_engine)
         self.session = db_session()
+
+    def init_app(self, app):
+        """
+        Initializes the app
+        :return: None
+        """
+        self.app = app
 
     def init_database(self):
         """
@@ -45,7 +55,13 @@ class DataProviderService:
         :return: The loans.
         """
         all_loans = self.session.query(Loan).all()
-        loan_list = [loan.serialize() for loan in all_loans]
+        loan_list = []
+        for loan in all_loans:
+            user = self.get_user(loan.user_id).serialize()
+            loan_data = loan.serialize()
+            del loan_data['user_id']
+            loan_data['user'] = user
+            loan_list += [loan_data]
         return loan_list
 
     def get_userloans(self, user_id):
@@ -88,6 +104,29 @@ class DataProviderService:
         the_user = self.session.query(User).filter_by(user_id=user.user_id).first()
         return the_user
 
+    def remind_user(self, user, book, return_by):
+        """
+        :return: The updated user.
+        """
+        the_loan = self.session.query(Loan).filter_by(user_id=user.user_id,
+                                                      book_id=book.book_id,
+                                                      status="loaned out").first()
+        the_loan.return_by = return_by
+        self.session.add(the_loan)
+        self.session.commit()
+        line1 = f'Hello, {user.name}!\nThe library wants you to return the book '
+        line2 = f'"{book.name}" by the date {return_by}. This is just a friendly reminder for the same.'
+        email_body = line1 + line2
+        email_content = "Return Book Reminder"
+        mail = Mail()
+        mail.init_app(self.app)
+        msg = Message(email_content,
+                      recipients=["krishnakaranam3732@gmail.com"],
+                      sender="bookscatalogproject@gmail.com",
+                      body=email_body)
+        mail.send(msg)
+        return the_loan
+
     def put_note(self, note):
         """
         :return: The updated note.
@@ -104,7 +143,10 @@ class DataProviderService:
         self.session.add(loan)
         self.session.commit()
         book = self.get_book(loan.book_id)
-        book.status = loan.status
+        if loan.status.lower() == "returned":
+            book.status = "Available"
+        else:
+            book.status = loan.status
         self.put_book(book)
         the_loan = self.session.query(Loan).filter_by(loan_id=loan.loan_id).first()
         return the_loan

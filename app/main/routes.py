@@ -37,6 +37,7 @@ from .middleware import add_users
 from .middleware import add_notes
 from .middleware import add_loans
 from .middleware import add_lists
+from .middleware import remind_user
 
 
 def init_api_routes(app):
@@ -50,6 +51,8 @@ def init_api_routes(app):
                                  ' book lists')
         note_api = api.namespace('notes', description='Operations on' +
                                  ' book notes')
+        admin_api = api.namespace('admin', description='Operations by' +
+                                  ' Admin')
 
         add_book = api.model('Book', {
                 'name': fields.String,
@@ -78,7 +81,8 @@ def init_api_routes(app):
                 'user_id': fields.Integer,
                 'status': fields.String,
                 'borrowed_date': fields.DateTime,
-                'return_date': fields.DateTime
+                'return_by': fields.DateTime,
+                'returned_on': fields.DateTime
                 })
 
         add_list = api.model('List', {
@@ -90,6 +94,12 @@ def init_api_routes(app):
                 'book_id': fields.Integer,
                 'user_id': fields.Integer,
                 'notes': fields.String
+                })
+
+        remind = api.model('Remind', {
+                'user_id': fields.Integer,
+                'book_id': fields.Integer,
+                'return_by': fields.DateTime
                 })
 
         @book_api.route('/<int:book_id>')
@@ -348,19 +358,33 @@ def init_api_routes(app):
                                 book = get_book(book_id)
                                 if book.status != "Available":
                                         return {"message": "Book not available."}, 400
+                        else:
+                                return {"message": "book_id required to take a loan."}, 400
                         if 'user_id' in data:
                                 user_id = data['user_id']
                                 get_user(user_id)
+                        else:
+                                return {"message": "user_id required to take a loan."}, 400
                         if 'status' in data:
                                 status = data['status']
+                        else:
+                                return {"message": "status required to take a loan."}, 400
                         if 'borrowed_date' in data:
                                 borrowed_date = data['borrowed_date']
-                        if 'return_date' in data:
-                                return_date = data['return_date']
+                        else:
+                                return {"message": "borrowed_date required to take a loan."}, 400
+                        if 'return_by' in data:
+                                return_by = data['return_by']
+                        else:
+                                return_by = None
+                        if 'returned_on' in data:
+                                returned_on = data['returned_on']
+                        else:
+                                returned_on = None
 
                         loan = Loan(book_id=book_id, user_id=user_id,
                                     status=status, borrowed_date=borrowed_date,
-                                    return_date=return_date)
+                                    return_by=return_by, returned_on=returned_on)
                         return add_loans(loan).serialize(), 201
 
         @loan_api.route('/<int:loan_id>')
@@ -384,8 +408,10 @@ def init_api_routes(app):
                                 loan.status = data['status']
                         if 'borrowed_date' in data:
                                 loan.borrowed_date = data['borrowed_date']
-                        if 'return_date' in data:
-                                loan.return_date = data['return_date']
+                        if 'return_by' in data:
+                                loan.return_by = data['return_by']
+                        if 'returned_on' in data:
+                                loan.returned_on = data['returned_on']
                         return put_loan(loan).serialize(), 200
 
                 @loan_api.response(204, 'No Content')
@@ -467,3 +493,16 @@ def init_api_routes(app):
                         '''Deletes a list'''
                         get_list(list_id)
                         return delete_list(list_id), 204
+
+        @admin_api.route('/remind/<int:loan_id>')
+        class Remind(Resource):
+                @admin_api.response(201, 'Created')
+                @admin_api.response(400, 'Validation Error')
+                @list_api.doc(params={'loan_id': 'The loan_id of the ' +
+                                      'loan to be reminded'})
+                def post(self, loan_id):
+                        '''Reminds the person about the loan'''
+                        loan = get_loan(loan_id)
+                        user = get_user(loan.user_id)
+                        book = get_book(loan.book_id)
+                        return remind_user(user, book, loan.return_by).serialize(), 204

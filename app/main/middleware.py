@@ -62,6 +62,18 @@ def get_userloans(user_id):
         abort(404)
 
 
+def remind_user(user, book, return_by):
+    status = DATA_PROVIDER.remind_user(user, book, return_by)
+    if status:
+        return status
+    else:
+        #
+        # In case we did not find any loans
+        # we send HTTP 404 - Not Found error to the client
+        #
+        abort(404)
+
+
 def get_userlists(user_id):
     current_lists = DATA_PROVIDER.get_userlists(user_id)
     if current_lists:
