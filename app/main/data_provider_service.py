@@ -34,6 +34,12 @@ class DataProviderService:
         :return: None
         """
         self.app = app
+        self.app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+        self.app.config['MAIL_PORT'] = 465
+        self.app.config['MAIL_USERNAME'] = 'bookscatalogproject@gmail.com'
+        self.app.config['MAIL_PASSWORD'] = 'Watermarke@401'
+        self.app.config['MAIL_USE_TLS'] = False
+        self.app.config['MAIL_USE_SSL'] = True
 
     def init_database(self):
         """
@@ -322,7 +328,7 @@ class DataProviderService:
         """
         self.session.add(user)
         self.session.commit()
-        the_user = self.session.query(Library).filter_by(name=user.name,
+        the_user = self.session.query(User).filter_by(name=user.name,
                                                          email=user.email,
                                                          phone=user.phone,
                                                          birth_year=user.birth_year).first()
