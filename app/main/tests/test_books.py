@@ -1,12 +1,8 @@
 import json
 import requests
+import pytest
 
 BASE_URL = "https://hufflepuffbookstore.herokuapp.com"
-
-response = requests.get(BASE_URL + "/books/3")
-print(response)
-#print(response.json())
-print(json.dumps(response.json(), indent = 4))
 
 all_books = [
     {
@@ -51,7 +47,20 @@ all_books = [
     }
 ]
 
-print(all_books[1])
+def test_all_books():
+    response = requests.get(BASE_URL + "/books")
+
+    assert response.json() == all_books
+
+
+def test_single_book():
+    book_id = "3"
+    response = requests.get(BASE_URL + "/books/" + book_id)
+
+    assert response.json() == all_books[1]
+
+    
+
 
 
 
