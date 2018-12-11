@@ -144,7 +144,7 @@ def test_post_search_book():
 
     assert response.json() == all_books[0]
 
-def test_post_search_book():
+def test_put_book():
     payload = {
         "status": "loaned out"
     }
