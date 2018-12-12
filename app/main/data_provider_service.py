@@ -117,7 +117,7 @@ class DataProviderService:
         the_loan = self.session.query(Loan).filter_by(user_id=user.user_id,
                                                       book_id=book.book_id,
                                                       status="loaned out").first()
-        the_loan.return_by = return_by
+        #the_loan.return_by = return_by
         self.session.add(the_loan)
         self.session.commit()
         line1 = f'Hello, {user.name}!\nThe library wants you to return the book '
