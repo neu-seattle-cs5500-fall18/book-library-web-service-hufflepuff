@@ -127,7 +127,7 @@ class DataProviderService:
         mail = Mail()
         mail.init_app(self.app)
         msg = Message(email_content,
-                      recipients=["krishnakaranam3732@gmail.com"],
+                      recipients=[user.email],
                       sender="bookscatalogproject@gmail.com",
                       body=email_body)
         mail.send(msg)
