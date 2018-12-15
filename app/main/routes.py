@@ -97,8 +97,6 @@ def init_api_routes(app):
                 })
 
         remind = api.model('Remind', {
-                'user_id': fields.Integer,
-                'book_id': fields.Integer,
                 'return_by': fields.DateTime
                 })
 
@@ -370,15 +368,15 @@ def init_api_routes(app):
                         else:
                                 return {"message": "status required to take a loan."}, 400
                         if 'borrowed_date' in data:
-                                borrowed_date = data['borrowed_date']
+                                borrowed_date = data['borrowed_date'][0:10]
                         else:
                                 return {"message": "borrowed_date required to take a loan."}, 400
                         if 'return_by' in data:
-                                return_by = data['return_by']
+                                return_by = data['return_by'][0:10]
                         else:
                                 return_by = None
                         if 'returned_on' in data:
-                                returned_on = data['returned_on']
+                                returned_on = data['returned_on'][0:10]
                         else:
                                 returned_on = None
 
@@ -407,11 +405,11 @@ def init_api_routes(app):
                         if 'status' in data:
                                 loan.status = data['status']
                         if 'borrowed_date' in data:
-                                loan.borrowed_date = data['borrowed_date']
+                                loan.borrowed_date = data['borrowed_date'][0:10]
                         if 'return_by' in data:
-                                loan.return_by = data['return_by']
+                                loan.return_by = data['return_by'][0:10]
                         if 'returned_on' in data:
-                                loan.returned_on = data['returned_on']
+                                loan.returned_on = data['returned_on'][0:10]
                         return put_loan(loan).serialize(), 200
 
                 @loan_api.response(204, 'No Content')
@@ -498,11 +496,17 @@ def init_api_routes(app):
         class Remind(Resource):
                 @admin_api.response(201, 'Created')
                 @admin_api.response(400, 'Validation Error')
-                @list_api.doc(params={'loan_id': 'The loan_id of the ' +
-                                      'loan to be reminded'})
+                @admin_api.doc(params={'loan_id': 'The loan_id of the ' +
+                                       'loan to be reminded'})
+                @admin_api.expect(remind)
                 def post(self, loan_id):
                         '''Reminds the person about the loan'''
                         loan = get_loan(loan_id)
+                        data = request.json
+                        if 'return_by' in data:
+                                return_by = data['return_by'][0:10]
+                        else:
+                                return_by = loan.return_by
                         user = get_user(loan.user_id)
                         book = get_book(loan.book_id)
-                        return remind_user(user, book, loan.return_by).serialize(), 204
+                        return remind_user(user, book, return_by).serialize(), 204
